@@ -3,7 +3,7 @@
 > A two-part **behavioral circuit breaker** for traders who are serious about protecting their capital from themselves.
 
 ---
-[Watch the TiltCheck Demo](Video%20Project%2023.mp4)
+[![Watch the TiltCheck Demo](https://img.youtube.com/vi/MpR3K2VT5sE/0.jpg)](https://youtu.be/MpR3K2VT5sE)
 ## The Problem
 
 Every blown account has the same DNA: a disciplined trader, one bad loss, and a split-second emotional decision to "get it back."
