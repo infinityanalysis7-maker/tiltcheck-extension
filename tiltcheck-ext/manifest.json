@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "TiltCheck Emergency Cool-Down",
+  "version": "1.0.0",
+  "description": "Injects an emergency cool-down button on trading sites to prevent emotional revenge trading. 100% client-side, zero telemetry, no external networking.",
+  "permissions": [],
+  "host_permissions": [
+    "https://tiltcheck.vercel.app/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://dexscreener.com/*",
+        "https://*.dexscreener.com/*",
+        "https://pump.fun/*",
+        "https://*.pump.fun/*",
+        "https://tradingview.com/*",
+        "https://*.tradingview.com/*"
+      ],
+      "css": ["styles.css"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

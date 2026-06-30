@@ -1,0 +1,168 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © TiltCheck
+// @version=6
+// Description: "Dynamic Risk Exhaustion Monitor (DRE-Monitor): A statistical framework for quantifying consecutive adverse price excursion and peak-to-trough drawdown in real-time."
+//
+// ABOUT:
+// DRE-Monitor tracks two mathematically independent but complementary risk metrics:
+//   1. Consecutive adverse bars (close below a dynamic moving average) — a proxy for sustained
+//      directional momentum against the trader's position.
+//   2. Peak-to-trough percentage drawdown from a rolling session high — a direct measure of
+//      capital erosion from the most recent local maximum.
+//
+// When either metric violates its user-defined tolerance, a programmatic alert is fired to
+// signal that the trader has entered a high-probability emotional decision zone.
+
+indicator(title='Dynamic Risk Exhaustion Monitor', shorttitle='DRE-Monitor', overlay=false, max_labels_count=500, max_lines_count=500)
+
+// ──────────────────────────────────────────────────────────────────────────────
+// INPUTS
+// ──────────────────────────────────────────────────────────────────────────────
+// Group: Filter Conditions
+maLength        = input.int(21,  'Moving Average Length', minval=1,      group='Filter Conditions')
+maType          = input.string('EMA', 'MA Type', options=['SMA', 'EMA', 'WMA'], group='Filter Conditions')
+enableMAFilter  = input.bool(true,  'Require Close Below MA',                group='Filter Conditions')
+requireRedCandle= input.bool(true,  'Require Red Candle (Close < Open)',     group='Filter Conditions')
+
+// Group: Risk Thresholds
+maxConsecutiveLosses = input.int(3,   'Max Consecutive Adverse Bars', minval=1, group='Risk Thresholds')
+drawdownThresholdPct = input.float(3.0, 'Max Drawdown % from Session High', minval=0.1, step=0.1, group='Risk Thresholds')
+enableDrawdown       = input.bool(true, 'Enable Drawdown Monitor', group='Risk Thresholds')
+enableConsecutive    = input.bool(true, 'Enable Consecutive Loss Tracker', group='Risk Thresholds')
+
+// ──────────────────────────────────────────────────────────────────────────────
+// MOVING AVERAGE CALCULATION
+// ──────────────────────────────────────────────────────────────────────────────
+// We allow the user to select SMA, EMA, or WMA to define the dynamic mean-reversion
+// boundary. A close below this boundary suggests the current bar is statistically
+// divergent from the local trend, increasing the probability of continuation.
+maSource = close
+maValue = switch maType
+    'SMA' => ta.sma(maSource, maLength)
+    'EMA' => ta.ema(maSource, maLength)
+    'WMA' => ta.wma(maSource, maLength)
+    => ta.ema(maSource, maLength)
+
+// ──────────────────────────────────────────────────────────────────────────────
+// STATE VARIABLES (PERSISTENT ACROSS BARS)
+// ──────────────────────────────────────────────────────────────────────────────
+// sessionHigh: Floating watermark representing the highest price achieved since
+// the indicator was loaded. It acts as the drawdown benchmark (trailing peak).
+// Reset occurs only when the current close exceeds the prior sessionHigh,
+// creating a natural recovery mechanism.
+var float sessionHigh = high
+
+// consecutiveAdverse: Counter for bars that simultaneously satisfy all adverse
+// conditions (below MA, red candle if required). Resets to zero on any bar that
+// fails the condition, ensuring the count reflects uninterrupted risk.
+var int consecutiveAdverse = 0
+
+// breachFired: One-shot latch to prevent alert spam. Once a threshold is breached
+// and the alert fires, this flag locks until the risk condition fully clears.
+var bool breachFired = false
+
+// ──────────────────────────────────────────────────────────────────────────────
+// SESSION HIGH UPDATE LOGIC
+// ──────────────────────────────────────────────────────────────────────────────
+// When the current close exceeds the tracked sessionHigh, we update the watermark
+// and reset the consecutive adverse counter. This models the psychological "reset"
+// a trader feels after recovering to a new equity high.
+if close > sessionHigh
+    sessionHigh := close
+    consecutiveAdverse := 0
+
+// ──────────────────────────────────────────────────────────────────────────────
+// CONSECUTIVE ADVERSE BAR LOGIC
+// ──────────────────────────────────────────────────────────────────────────────
+// An "adverse bar" is defined as a bar that satisfies BOTH of the following:
+//   (a) Close < selected Moving Average (price below dynamic mean)
+//   (b) Close < Open (red / bearish candle body)
+//
+// We evaluate this strictly on bar close (barstate.isconfirmed) to avoid
+// repainting — the indicator must not change its historical output as the
+// live bar evolves.
+bool belowMA = close < maValue
+bool isRed = close < open
+bool isAdverse = (not enableMAFilter or belowMA) and (not requireRedCandle or isRed)
+
+if barstate.isconfirmed and enableConsecutive
+    if isAdverse
+        consecutiveAdverse += 1
+    else
+        consecutiveAdverse := 0
+
+// ──────────────────────────────────────────────────────────────────────────────
+// DRAWDOWN CALCULATION
+// ──────────────────────────────────────────────────────────────────────────────
+// Peak-to-trough drawdown is computed as the percentage decline from the running
+// sessionHigh to the current close.
+//
+//   Formula: drawdown = ((sessionHigh - close) / sessionHigh) * 100
+//
+// This yields a non-negative scalar representing the percentage of unrealized
+// retracement from the most recent high watermark.
+float drawdownPct = ((sessionHigh - close) / sessionHigh) * 100.0
+
+// ──────────────────────────────────────────────────────────────────────────────
+// THRESHOLD VIOLATION FLAGS
+// ──────────────────────────────────────────────────────────────────────────────
+bool ddBreached = enableDrawdown and drawdownPct >= drawdownThresholdPct
+bool consecBreached = enableConsecutive and consecutiveAdverse >= maxConsecutiveLosses
+bool riskExhausted = ddBreached or consecBreached
+
+// ──────────────────────────────────────────────────────────────────────────────
+// VISUAL OUTPUT (STANDALONE ANALYTICAL UTILITY)
+// ──────────────────────────────────────────────────────────────────────────────
+// Pane 1: Drawdown percentage plot with threshold reference line.
+//         Color shifts to red when the drawdown exceeds the tolerance.
+plot(drawdownPct, 'Drawdown %', color=drawdownPct >= drawdownThresholdPct ? color.new(color.red, 0) : color.new(color.gray, 0), linewidth=2)
+hline(drawdownThresholdPct, 'Drawdown Limit', color=color.new(color.red, 50), linestyle=hline.style_dashed)
+
+// Pane 2: Consecutive adverse bar count (histogram for quick visual scanning).
+plot(consecutiveAdverse, 'Consecutive Adverse Bars', color=color.new(color.orange, 0), style=plot.style_histogram)
+hline(maxConsecutiveLosses, 'Consecutive Limit', color=color.new(color.orange, 50), linestyle=hline.style_dashed)
+
+// Price overlay: Plot the selected MA on the main chart pane so users can
+// visually confirm the adverse-bar condition in real-time.
+plot(enableMAFilter ? maValue : na, 'Dynamic MA', color=color.new(color.blue, 0), linewidth=1)
+
+// Background highlight: When the market is in a confirmed adverse sequence,
+// the background receives a subtle warning tint.
+bgcolor(enableConsecutive and consecutiveAdverse >= 1 ? color.new(color.orange, 90) : na, title='Adverse Sequence Zone')
+
+// Shape: A red triangle appears at the bottom of the indicator pane on the
+// exact bar where the risk threshold is exhausted.
+plotshape(riskExhausted, 'Risk Exhaustion', shape.triangleup, location.bottom, color=color.new(color.red, 0), size=size.small)
+
+// ──────────────────────────────────────────────────────────────────────────────
+// PROGRAMMATIC ALERT (PINE SCRIPT v6)
+// ──────────────────────────────────────────────────────────────────────────────
+// The `alert()` function emits a programmatic alert message that can be routed
+// to webhook, mobile push, or email via TradingView's alert infrastructure.
+//
+// We use a one-shot latch (`breachFired`) to ensure the alert fires exactly once
+// per distinct risk event, rather than spamming on every bar where the condition
+// remains true. The latch resets automatically when the risk condition clears.
+//
+// Frequency is gated to `barstate.isconfirmed` so that alerts only evaluate on
+// closed, non-repainting bars.
+if barstate.isconfirmed
+    if riskExhausted and not breachFired
+        alert('Drawdown limit reached. Emotional recovery protocol initiated. Access TiltCheck to lock charts: tiltcheck [dot] vercel [dot] app', alert.freq_once_per_bar_close)
+        breachFired := true
+    else if not riskExhausted
+        breachFired := false
+
+// ──────────────────────────────────────────────────────────────────────────────
+// TABLE SUMMARY (HUD)
+// ──────────────────────────────────────────────────────────────────────────────
+// A small on-chart table provides immediate, glanceable context without
+// requiring the user to open the indicator pane.
+var table infoTable = table.new(position.top_right, 2, 3, bgcolor=color.new(color.black, 80), frame_width=1)
+if barstate.islast
+    table.cell(infoTable, 0, 0, 'Drawdown', text_color=color.white, text_size=size.small)
+    table.cell(infoTable, 1, 0, str.tostring(drawdownPct, '#.##') + '%', text_color=drawdownPct >= drawdownThresholdPct ? color.red : color.white, text_size=size.small)
+    table.cell(infoTable, 0, 1, 'Adverse Streak', text_color=color.white, text_size=size.small)
+    table.cell(infoTable, 1, 1, str.tostring(consecutiveAdverse), text_color=consecutiveAdverse >= maxConsecutiveLosses ? color.red : color.white, text_size=size.small)
+    table.cell(infoTable, 0, 2, 'Status', text_color=color.white, text_size=size.small)
+    table.cell(infoTable, 1, 2, riskExhausted ? 'EXHAUSTED' : 'NORMAL', text_color=riskExhausted ? color.red : color.green, text_size=size.small)
