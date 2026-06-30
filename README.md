@@ -1,164 +1,94 @@
-// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
-// © TiltCheck
-// @version=6
-// Description: "Dynamic Risk Exhaustion Monitor (DRE-Monitor): A statistical framework for quantifying consecutive adverse price excursion and peak-to-trough drawdown in real-time."
-//
-// ABOUT:
-// DRE-Monitor tracks two mathematically independent but complementary risk metrics:
-//   1. Consecutive adverse bars (close below a dynamic moving average) — a proxy for sustained
-//      directional momentum against the trader's position.
-//   2. Peak-to-trough percentage drawdown from a rolling session high — a direct measure of
-//      capital erosion from the most recent local maximum.
-//
-// When either metric violates its user-defined tolerance, a programmatic alert is fired to
-// signal that the trader has entered a high-probability emotional decision zone.
-
-indicator(title='Dynamic Risk Exhaustion Monitor', shorttitle='DRE-Monitor', overlay=false, max_labels_count=500, max_lines_count=500)
-
-// ──────────────────────────────────────────────────────────────────────────────
-// INPUTS
-// ──────────────────────────────────────────────────────────────────────────────
-// Group: Filter Conditions
-maLength        = input.int(21,  'Moving Average Length', minval=1,      group='Filter Conditions')
-maType          = input.string('EMA', 'MA Type', options=['SMA', 'EMA', 'WMA'], group='Filter Conditions')
-enableMAFilter  = input.bool(true,  'Require Close Below MA',                group='Filter Conditions')
-requireRedCandle= input.bool(true,  'Require Red Candle (Close < Open)',     group='Filter Conditions')
-
-// Group: Risk Thresholds
-maxConsecutiveLosses = input.int(3,   'Max Consecutive Adverse Bars', minval=1, group='Risk Thresholds')
-drawdownThresholdPct = input.float(3.0, 'Max Drawdown % from Session High', minval=0.1, step=0.1, group='Risk Thresholds')
-enableDrawdown       = input.bool(true, 'Enable Drawdown Monitor', group='Risk Thresholds')
-enableConsecutive    = input.bool(true, 'Enable Consecutive Loss Tracker', group='Risk Thresholds')
-
-// ──────────────────────────────────────────────────────────────────────────────
-// MOVING AVERAGE CALCULATION
-// ──────────────────────────────────────────────────────────────────────────────
-// We allow the user to select SMA, EMA, or WMA to define the dynamic mean-reversion
-// boundary. A close below this boundary suggests the current bar is statistically
-// divergent from the local trend, increasing the probability of continuation.
-maSource = close
-maValue = switch maType
-    'SMA' => ta.sma(maSource, maLength)
-    'EMA' => ta.ema(maSource, maLength)
-    'WMA' => ta.wma(maSource, maLength)
-    => ta.ema(maSource, maLength)
-
-// ──────────────────────────────────────────────────────────────────────────────
-// STATE VARIABLES (PERSISTENT ACROSS BARS)
-// ──────────────────────────────────────────────────────────────────────────────
-// sessionHigh: Floating watermark representing the highest price achieved since
-// the indicator was loaded. It acts as the drawdown benchmark (trailing peak).
-// Reset occurs only when the current close exceeds the prior sessionHigh,
-// creating a natural recovery mechanism.
-var float sessionHigh = high
-
-// consecutiveAdverse: Counter for bars that simultaneously satisfy all adverse
-// conditions (below MA, red candle if required). Resets to zero on any bar that
-// fails the condition, ensuring the count reflects uninterrupted risk.
-var int consecutiveAdverse = 0
-
-// breachFired: One-shot latch to prevent alert spam. Once a threshold is breached
-// and the alert fires, this flag locks until the risk condition fully clears.
-var bool breachFired = false
-
-// ──────────────────────────────────────────────────────────────────────────────
-// SESSION HIGH UPDATE LOGIC
-// ──────────────────────────────────────────────────────────────────────────────
-// When the current close exceeds the tracked sessionHigh, we update the watermark
-// and reset the consecutive adverse counter. This models the psychological "reset"
-// a trader feels after recovering to a new equity high.
-if close > sessionHigh
-    sessionHigh := close
-    consecutiveAdverse := 0
-
-// ──────────────────────────────────────────────────────────────────────────────
-// CONSECUTIVE ADVERSE BAR LOGIC
-// ──────────────────────────────────────────────────────────────────────────────
-// An "adverse bar" is defined as a bar that satisfies BOTH of the following:
-//   (a) Close < selected Moving Average (price below dynamic mean)
-//   (b) Close < Open (red / bearish candle body)
-//
-// We evaluate this strictly on bar close (barstate.isconfirmed) to avoid
-// repainting — the indicator must not change its historical output as the
-// live bar evolves.
-bool belowMA = close < maValue
-bool isRed = close < open
-bool isAdverse = (not enableMAFilter or belowMA) and (not requireRedCandle or isRed)
-
-if barstate.isconfirmed and enableConsecutive
-    if isAdverse
-        consecutiveAdverse += 1
-    else
-        consecutiveAdverse := 0
-
-// ──────────────────────────────────────────────────────────────────────────────
-// DRAWDOWN CALCULATION
-// ──────────────────────────────────────────────────────────────────────────────
-// Peak-to-trough drawdown is computed as the percentage decline from the running
-// sessionHigh to the current close.
-//
-//   Formula: drawdown = ((sessionHigh - close) / sessionHigh) * 100
-//
-// This yields a non-negative scalar representing the percentage of unrealized
-// retracement from the most recent high watermark.
-float drawdownPct = ((sessionHigh - close) / sessionHigh) * 100.0
-
-// ──────────────────────────────────────────────────────────────────────────────
-// THRESHOLD VIOLATION FLAGS
-// ──────────────────────────────────────────────────────────────────────────────
-bool ddBreached = enableDrawdown and drawdownPct >= drawdownThresholdPct
-bool consecBreached = enableConsecutive and consecutiveAdverse >= maxConsecutiveLosses
-bool riskExhausted = ddBreached or consecBreached
-
-// ──────────────────────────────────────────────────────────────────────────────
-// VISUAL OUTPUT (STANDALONE ANALYTICAL UTILITY)
-// ──────────────────────────────────────────────────────────────────────────────
-// Pane 1: Drawdown percentage plot with threshold reference line.
-//         Color shifts to red when the drawdown exceeds the tolerance.
-plot(drawdownPct, 'Drawdown %', color=drawdownPct >= drawdownThresholdPct ? color.new(color.red, 0) : color.new(color.gray, 0), linewidth=2)
-hline(drawdownThresholdPct, 'Drawdown Limit', color=color.new(color.red, 50), linestyle=hline.style_dashed)
-
-// Pane 2: Consecutive adverse bar count (histogram for quick visual scanning).
-plot(consecutiveAdverse, 'Consecutive Adverse Bars', color=color.new(color.orange, 0), style=plot.style_histogram)
-hline(maxConsecutiveLosses, 'Consecutive Limit', color=color.new(color.orange, 50), linestyle=hline.style_dashed)
-
-// Background highlight: When the market is in a confirmed adverse sequence,
-// the background receives a subtle warning tint.
-bgcolor(enableConsecutive and consecutiveAdverse >= 1 ? color.new(color.orange, 90) : na, title='Adverse Sequence Zone')
-
-// Shape: A red triangle appears at the bottom of the indicator pane on the
-// exact bar where the risk threshold is exhausted.
-plotshape(riskExhausted, 'Risk Exhaustion', shape.triangleup, location.bottom, color=color.new(color.red, 0), size=size.small)
-
-// ──────────────────────────────────────────────────────────────────────────────
-// PROGRAMMATIC ALERT (PINE SCRIPT v6)
-// ──────────────────────────────────────────────────────────────────────────────
-// The `alert()` function emits a programmatic alert message that can be routed
-// to webhook, mobile push, or email via TradingView's alert infrastructure.
-//
-// We use a one-shot latch (`breachFired`) to ensure the alert fires exactly once
-// per distinct risk event, rather than spamming on every bar where the condition
-// remains true. The latch resets automatically when the risk condition clears.
-//
-// Frequency is gated to `barstate.isconfirmed` so that alerts only evaluate on
-// closed, non-repainting bars.
-if barstate.isconfirmed
-    if riskExhausted and not breachFired
-        alert('Drawdown limit reached. Emotional recovery protocol initiated. Access TiltCheck to lock charts: tiltcheck [dot] vercel [dot] app', alert.freq_once_per_bar_close)
-        breachFired := true
-    else if not riskExhausted
-        breachFired := false
-
-// ──────────────────────────────────────────────────────────────────────────────
-// TABLE SUMMARY (HUD)
-// ──────────────────────────────────────────────────────────────────────────────
-// A small on-chart table provides immediate, glanceable context without
-// requiring the user to open the indicator pane.
-var table infoTable = table.new(position.top_right, 2, 3, bgcolor=color.new(color.black, 80), frame_width=1)
-if barstate.islast
-    table.cell(infoTable, 0, 0, 'Drawdown', text_color=color.white, text_size=size.small)
-    table.cell(infoTable, 1, 0, str.tostring(drawdownPct, '#.##') + '%', text_color=drawdownPct >= drawdownThresholdPct ? color.red : color.white, text_size=size.small)
-    table.cell(infoTable, 0, 1, 'Adverse Streak', text_color=color.white, text_size=size.small)
-    table.cell(infoTable, 1, 1, str.tostring(consecutiveAdverse), text_color=consecutiveAdverse >= maxConsecutiveLosses ? color.red : color.white, text_size=size.small)
-    table.cell(infoTable, 0, 2, 'Status', text_color=color.white, text_size=size.small)
-    table.cell(infoTable, 1, 2, riskExhausted ? 'EXHAUSTED' : 'NORMAL', text_color=riskExhausted ? color.red : color.green, text_size=size.small)
+DRE-Monitor + TiltCheck
+A two-part behavioral circuit breaker for traders who are serious about protecting their capital from themselves.
+The Problem
+Every blown account has the same DNA: a disciplined trader, one bad loss, and a split-second emotional decision to "get it back."
+Revenge trading is not a strategy problem. It is a biological problem. When adrenaline floods your system after a stop-loss breach, your prefrontal cortex—the part of your brain responsible for rational decision-making—goes offline. You are no longer trading. You are gambling. And the charts are designed to keep you clicking.
+The market does not care about your emotions. But your account does.
+The Solution
+This repository contains a two-layer safety net that separates emotional impulse from execution:
+Table
+Layer	What It Does	When It Fires
+DRE-Monitor (TradingView)	Quantifies your risk state in real-time using drawdown % and consecutive adverse bars.	When you hit your pre-defined risk threshold.
+TiltCheck Extension (Browser)	Physically locks you out of trading sites and forces a 15-minute cool-down.	When DRE-Monitor fires, or when you manually hit the Emergency Cool-Down button.
+DRE-Monitor is the sensor. TiltCheck is the lock.
+Used together, they create an automated pipeline that detects danger before you act on it—and then removes your ability to act until your nervous system has reset. It is the trading equivalent of a breathalyzer on a car ignition.
+Why the Combination Matters
+Alert fatigue is real. Most traders set mental stop-losses and then ignore them. Most traders know they should walk away—and then scroll back to the chart 90 seconds later.
+A standalone alert tells you what you already know. A standalone blocker requires you to remember to use it in the heat of the moment.
+The combination solves both failures:
+DRE-Monitor removes the burden of self-assessment. It tracks your drawdown and consecutive losses with mathematical precision. It does not get tired. It does not rationalize. It simply measures when you have entered the Emotional Decision Zone.
+TiltCheck removes the burden of self-control. Once triggered, it does not ask you if you want to lock out. It locks you out. You cannot override it. You cannot negotiate with it. You can only wait.
+That gap—between the alert and the lock—is where most revenge trades die. This system closes it.
+Architecture Overview
+plain
+Copy
+┌─────────────────┐     ┌──────────────────┐     ┌──────────────────┐
+│  TradingView    │────▶│  DRE-Monitor     │────▶│  TradingView     │
+│  Chart          │     │  (Pine Script)   │     │  Alert System    │
+└─────────────────┘     └──────────────────┘     └──────────────────┘
+                                                          │
+                                                          │ (Webhook / Notification)
+                                                          ▼
+                                               ┌──────────────────┐
+                                               │  TiltCheck       │
+                                               │  Browser         │
+                                               │  Extension       │
+                                               └──────────────────┘
+                                                          │
+                                                          │ (Instant Redirect)
+                                                          ▼
+                                               ┌──────────────────┐
+                                               │  tiltcheck.      │
+                                               │  vercel.app      │
+                                               │  (15-Min Lockout)│
+                                               └──────────────────┘
+Note: The DRE-Monitor alert can be routed to any TradingView notification channel (push, email, webhook). The browser extension also provides a manual Emergency Cool-Down button on every supported trading site for immediate, self-directed intervention.
+Getting Started
+Step 1: Add the DRE-Monitor Pine Script to TradingView
+Open TradingView in your browser and load any chart.
+Click Pine Editor at the bottom of the screen.
+Delete the default template code in the editor.
+Copy the entire contents of RiskExhaustionMonitor.pine from this repository and paste it into the Pine Editor.
+Click Add to Chart (or press Ctrl + S / Cmd + S).
+The indicator will appear in a separate pane below your chart. Configure your risk thresholds in the Settings panel:
+Moving Average Length (e.g., 21)
+Max Consecutive Adverse Bars (e.g., 3)
+Max Drawdown % from Session High (e.g., 3.0)
+Set up an Alert on the indicator:
+Right-click the indicator pane → Add Alert.
+Choose DRE-Monitor as the condition.
+Select Risk Exhaustion as the trigger.
+Choose your notification method (app, email, or webhook).
+The DRE-Monitor is now live. It will watch your chart 24/7 and alert you the moment you enter the Emotional Decision Zone.
+Step 2: Install the TiltCheck Browser Extension
+Chrome (Unpacked Extension)
+Download or clone this repository to your local machine.
+Open Google Chrome and navigate to:
+plain
+Copy
+chrome://extensions/
+Toggle Developer mode to ON in the top-right corner.
+Click Load unpacked in the top-left.
+Select the tiltcheck-extension folder (the one containing manifest.json) and click Select Folder.
+The TiltCheck Emergency Cool-Down tile will appear with a green dot. (Optional: click the pin icon to keep it in your toolbar.)
+Visit pump.fun, dexscreener.com, or tradingview.com. A bright crimson Emergency Cool-Down button will appear in the top-left corner of the page.
+Click the button anytime you feel the urge to revenge-trade. You will be instantly redirected to a 15-minute disciplined lockout at tiltcheck.vercel.app.
+Tip: The button survives SPA route changes. If the site swaps the DOM underneath you, it re-injects automatically within milliseconds.
+Security & Privacy
+This system is designed with a zero-trust, zero-telemetry philosophy:
+No external data collection. The extension does not read, store, or transmit trading data, wallet addresses, or personal information.
+No analytics. No tracking pixels. No error reporting. No cloud services.
+No backend. The Pine Script runs entirely inside TradingView. The extension runs entirely inside your browser. The only outbound action is a voluntary redirect when you click the button.
+Open-source auditability. The entire codebase is contained in three small, readable files. You can verify every line before installing.
+Your risk data is yours. Your privacy is yours.
+How It Works (For the Curious)
+DRE-Monitor Mathematical Logic
+The script tracks two independent risk metrics:
+Peak-to-Trough Drawdown: ((SessionHigh - Close) / SessionHigh) * 100
+A running percentage decline from the highest price achieved since the indicator loaded.
+Updates only when a new high is printed, creating a natural recovery mechanism.
+Consecutive Adverse Bars: A counter of uninterrupted bars where Close < MA (and optionally Close < Open).
+Resets to zero on the first non-adverse bar, ensuring the count reflects sustained momentum against your position.
+Both metrics are gated by barstate.isconfirmed to eliminate repainting. A one-shot breachFired latch prevents alert spam.
+TiltCheck Extension Logic
+The extension uses a MutationObserver to watch for DOM changes on modern SPAs. It injects a fixed-position button with z-index: 2147483647 (maximum safe value) to survive every banner, popup, and overlay. On click, it simulates a native <a> element click with target="_top" to force a full-tab redirect, breaking out of any iframe context.
