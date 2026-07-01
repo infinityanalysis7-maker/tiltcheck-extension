@@ -1,75 +1,133 @@
- DRE-Monitor + TiltCheck
+# TiltCheck + DRE-Monitor
 
-> A two-part **behavioral circuit breaker** for traders who are serious about protecting their capital from themselves.
+> **A behavioral circuit breaker for traders who are serious about protecting their capital from themselves.**
 
----
-[![Watch the TiltCheck Demo](https://img.youtube.com/vi/MpR3K2VT5sE/0.jpg)](https://youtu.be/MpR3K2VT5sE)
-## The Problem
+Stop revenge trading before it destroys your account.
 
-Every blown account has the same DNA: a disciplined trader, one bad loss, and a split-second emotional decision to "get it back."
+**DRE-Monitor** detects emotional risk on TradingView.
 
-Revenge trading is not a strategy problem. It is a **biological problem**. When adrenaline floods your system after a stop-loss breach, your prefrontal cortex—the part of your brain responsible for rational decision-making—goes offline. You are no longer trading. You are gambling. And the charts are designed to keep you clicking.
+**TiltCheck** interrupts execution by forcing a cool-down before you can place another trade.
 
-The market does not care about your emotions. But your **account** does.
+Together they create a behavioral circuit breaker between impulse and execution.
 
 ---
 
-## The Solution
+# 🎥 Demo
 
-This repository contains a **two-layer safety net** that separates emotional impulse from execution:
+## Live Demo
 
-| Layer | What It Does | When It Fires |
-|-------|-------------|---------------|
-| **DRE-Monitor** (TradingView) | Quantifies your risk state in real-time using drawdown % and consecutive adverse bars. | When you hit your pre-defined risk threshold. |
-| **TiltCheck Extension** (Browser) | Physically locks you out of trading sites and forces a 15-minute cool-down. | When DRE-Monitor fires, or when you manually hit the Emergency Cool-Down button. |
+https://tiltcheck-app.vercel.app
 
-**DRE-Monitor is the sensor. TiltCheck is the lock.**
+## Demo Video
 
-Used together, they create an automated pipeline that detects danger *before* you act on it—and then removes your ability to act until your nervous system has reset. It is the trading equivalent of a breathalyzer on a car ignition.
+https://youtu.be/YOUR_VIDEO_LINK
 
 ---
 
-## Why the Combination Matters
+# 📸 Screenshots
 
-Alert fatigue is real. Most traders set mental stop-losses and then ignore them. Most traders know they should walk away—and then scroll back to the chart 90 seconds later.
+> Add screenshots here after uploading them.
 
-A standalone alert tells you what you already know. A standalone blocker requires you to remember to use it in the heat of the moment.
-
-**The combination solves both failures:**
-
-1. **DRE-Monitor** removes the burden of self-assessment. It tracks your drawdown and consecutive losses with mathematical precision. It does not get tired. It does not rationalize. It simply measures when you have entered the **Emotional Decision Zone**.
-
-2. **TiltCheck** removes the burden of self-control. Once triggered, it does not ask you if you want to lock out. It locks you out. You cannot override it. You cannot negotiate with it. You can only wait.
-
-That gap—between the alert and the lock—is where most revenge trades die. This system closes it.
+- Home
+- Pre-Trade Check
+- Trade Journal
+- Weekly Summary
+- TradingView Emergency Cool-Down Button
 
 ---
 
-## Architecture Overview
-┌─────────────────┐     ┌──────────────────┐     ┌──────────────────┐
-│  TradingView    │────▶│  DRE-Monitor     │────▶│  TradingView     │
-│  Chart          │     │  (Pine Script)   │     │  Alert System    │
-└─────────────────┘     └──────────────────┘     └──────────────────┘
-│
-│ (Webhook / Notification)
-▼
-┌──────────────────┐
-│  TiltCheck       │
-│  Browser         │
-│  Extension       │
-└──────────────────┘
-│
-│ (Instant Redirect)
-▼
-┌──────────────────┐
-│  tiltcheck.      │
-│  vercel.app      │
-│  (15-Min Lockout)│
-└──────────────────┘
-plain
-Copy
+# ✨ Features
 
-*Note: The DRE-Monitor alert can be routed to any TradingView notification channel (push, email, webhook). The browser extension also provides a manual Emergency Cool-Down button on every supported trading site for immediate, self-directed intervention.*
+- 🧠 Pre-Trade Discipline Check
+- 📒 Emotional Trade Journal
+- 📊 Weekly Discipline Summary
+- 🚨 Emergency Cool-Down Button
+- 📉 DRE-Monitor TradingView Indicator
+- 🔒 Behavioral Circuit Breaker
+- 🌐 Works directly inside your browser
+- 🔓 Fully Open Source
+- 🔐 Privacy First
+- 🚫 Zero Analytics
+- 🚫 Zero Tracking
+- 🚫 No Backend Required
+
+---
+
+# The Problem
+
+Most traders don't lose because they lack strategy.
+
+They lose because one emotional decision turns into ten.
+
+After a large loss, stress hormones reduce rational thinking. At that point you stop following your plan and start trying to "win it back."
+
+That is where revenge trading begins.
+
+Most trading tools help you analyze the market.
+
+TiltCheck helps you manage **yourself.**
+
+---
+
+# The Solution
+
+TiltCheck consists of two independent layers working together.
+
+| Layer | Purpose | Trigger |
+|-------|---------|---------|
+| **DRE-Monitor** | Detects dangerous emotional conditions using drawdown and consecutive adverse bars. | Risk threshold reached |
+| **TiltCheck Extension** | Forces an immediate cool-down before another emotional trade can happen. | Manual activation or TradingView alert |
+
+**DRE-Monitor is the sensor.**
+
+**TiltCheck is the lock.**
+
+Together they create a simple feedback loop:
+
+Detect emotional risk → Interrupt trading → Allow time to reset.
+
+---
+
+# Why This Combination Matters
+
+Most traders already know they should walk away.
+
+The problem is that emotions happen faster than discipline.
+
+Traditional alerts only notify you.
+
+Traditional website blockers depend on you remembering to use them.
+
+TiltCheck combines both.
+
+1. **DRE-Monitor** measures emotional danger objectively.
+2. **TiltCheck** removes the ability to immediately act on that emotion.
+
+That small gap between impulse and execution is where most revenge trades happen.
+
+TiltCheck closes that gap.
+
+---
+
+# 🏗 Architecture
+
+```mermaid
+flowchart LR
+
+A[TradingView Chart]
+-->B[DRE-Monitor]
+
+B
+-->C[TradingView Alert]
+
+C
+-->D[TiltCheck Extension]
+
+D
+-->E[Emergency Cool-Down]
+
+E
+-->F[TiltCheck Web App]
 
 ---
 
