@@ -1,4 +1,4 @@
-# TiltCheck + DRE-Monitor
+TiltCheck + DRE-Monitor
 
 > **A behavioral circuit breaker for traders who are serious about protecting their capital from themselves.**
 
@@ -12,71 +12,79 @@ Together they create a behavioral circuit breaker between impulse and execution.
 
 ---
 
-# 🎥 Demo
+## 🎥 Demo
 
-## Live Demo
+### 🌐 Live Demo
 
 https://tiltcheck-app.vercel.app
 
-## Demo Video
+### 📺 Demo Video
 
-https://youtu.be/YOUR_VIDEO_LINK
+> Replace with your YouTube demo link.
 
 ---
 
-# 📸 Screenshots
+## 📸 Screenshots
 
-> Add screenshots here after uploading them.
+> Replace these placeholders with screenshots.
 
-- Home
-- Pre-Trade Check
+- Home Dashboard
+- Pre-Trade Checklist
 - Trade Journal
 - Weekly Summary
 - TradingView Emergency Cool-Down Button
 
 ---
 
-# ✨ Features
+## ✨ Features
 
-- 🧠 Pre-Trade Discipline Check
+- 🧠 Pre-Trade Discipline Checklist
 - 📒 Emotional Trade Journal
 - 📊 Weekly Discipline Summary
 - 🚨 Emergency Cool-Down Button
 - 📉 DRE-Monitor TradingView Indicator
 - 🔒 Behavioral Circuit Breaker
-- 🌐 Works directly inside your browser
-- 🔓 Fully Open Source
+- 🌐 Browser Extension
+- 🔓 Open Source
 - 🔐 Privacy First
 - 🚫 Zero Analytics
 - 🚫 Zero Tracking
-- 🚫 No Backend Required
+- 🚫 No Backend
 
 ---
 
 # The Problem
 
-Most traders don't lose because they lack strategy.
+Every blown trading account follows a familiar pattern.
 
-They lose because one emotional decision turns into ten.
+One losing trade becomes two.
 
-After a large loss, stress hormones reduce rational thinking. At that point you stop following your plan and start trying to "win it back."
+Two become five.
 
-That is where revenge trading begins.
+Then comes revenge trading.
 
-Most trading tools help you analyze the market.
+Most traders already know they should stop.
 
-TiltCheck helps you manage **yourself.**
+The problem isn't knowledge.
+
+It's biology.
+
+After a significant loss, stress hormones reduce rational decision-making and increase impulsive behavior. At that moment you're no longer following your trading plan—you are reacting emotionally.
+
+Most trading software helps you analyze charts.
+
+**TiltCheck helps you analyze yourself.**
 
 ---
 
 # The Solution
 
-TiltCheck consists of two independent layers working together.
+TiltCheck combines two independent components into a single behavioral safety system.
 
 | Layer | Purpose | Trigger |
 |-------|---------|---------|
-| **DRE-Monitor** | Detects dangerous emotional conditions using drawdown and consecutive adverse bars. | Risk threshold reached |
-| **TiltCheck Extension** | Forces an immediate cool-down before another emotional trade can happen. | Manual activation or TradingView alert |
+| **DRE-Monitor** | Detects emotional risk using drawdown and consecutive adverse bars. | Risk threshold reached |
+| **TiltCheck Extension** | Blocks impulsive trading with a mandatory cool-down. | Manual activation or DRE alert |
 
 **DRE-Monitor is the sensor.**
 
@@ -84,28 +92,19 @@ TiltCheck consists of two independent layers working together.
 
 Together they create a simple feedback loop:
 
-Detect emotional risk → Interrupt trading → Allow time to reset.
+**Detect → Interrupt → Recover → Return with a clear mind**
 
 ---
 
-# Why This Combination Matters
+# Why This Matters
 
-Most traders already know they should walk away.
+Alerts are easy to ignore.
 
-The problem is that emotions happen faster than discipline.
+Willpower disappears under stress.
 
-Traditional alerts only notify you.
+TiltCheck bridges the gap between recognizing emotional danger and preventing impulsive execution.
 
-Traditional website blockers depend on you remembering to use them.
-
-TiltCheck combines both.
-
-1. **DRE-Monitor** measures emotional danger objectively.
-2. **TiltCheck** removes the ability to immediately act on that emotion.
-
-That small gap between impulse and execution is where most revenge trades happen.
-
-TiltCheck closes that gap.
+Instead of relying on discipline, the system temporarily removes the ability to keep clicking.
 
 ---
 
@@ -128,101 +127,126 @@ D
 
 E
 -->F[TiltCheck Web App]
+```
 
 ---
 
-## Getting Started
+# 🚀 Getting Started
 
-### Step 1: Add the DRE-Monitor Pine Script to TradingView
+## 1. Install DRE-Monitor
 
-1. Open **TradingView** in your browser and load any chart.
+1. Open TradingView.
+2. Open the Pine Editor.
+3. Copy `RiskExhaustionMonitor.pine`.
+4. Paste it into the editor.
+5. Click **Add to Chart**.
+6. Configure your thresholds.
+7. Create a TradingView Alert.
 
-2. Click **Pine Editor** at the bottom of the screen.
+Suggested defaults:
 
-3. Delete the default template code in the editor.
-
-4. Copy the entire contents of `RiskExhaustionMonitor.pine` from this repository and paste it into the Pine Editor.
-
-5. Click **Add to Chart** (or press `Ctrl + S` / `Cmd + S`).
-
-6. The indicator will appear in a separate pane below your chart. Configure your risk thresholds in the **Settings** panel:
-   - **Moving Average Length** (e.g., `21`)
-   - **Max Consecutive Adverse Bars** (e.g., `3`)
-   - **Max Drawdown % from Session High** (e.g., `3.0`)
-
-7. Set up an **Alert** on the indicator:
-   - Right-click the indicator pane → **Add Alert**.
-   - Choose **DRE-Monitor** as the condition.
-   - Select **Risk Exhaustion** as the trigger.
-   - Choose your notification method (app, email, or webhook).
-
-*The DRE-Monitor is now live. It will watch your chart 24/7 and alert you the moment you enter the Emotional Decision Zone.*
+- Moving Average: 21
+- Consecutive Adverse Bars: 3
+- Maximum Drawdown: 3%
 
 ---
 
-### Step 2: Install the TiltCheck Browser Extension
+## 2. Install TiltCheck Extension
 
-#### Chrome (Unpacked Extension)
+1. Clone or download this repository.
+2. Open Chrome.
+3. Visit:
 
-1. Download or clone this repository to your local machine.
+```text
+chrome://extensions
+```
 
-2. Open **Google Chrome** and navigate to:
-chrome://extensions/
-plain
-Copy
-
-3. Toggle **Developer mode** to **ON** in the top-right corner.
-
-4. Click **Load unpacked** in the top-left.
-
-5. Select the `tiltcheck-extension` folder (the one containing `manifest.json`) and click **Select Folder**.
-
-6. The **TiltCheck Emergency Cool-Down** tile will appear with a green dot. (Optional: click the **pin icon** to keep it in your toolbar.)
-
-7. Visit **pump.fun**, **dexscreener.com**, or **tradingview.com**. A bright crimson **Emergency Cool-Down** button will appear in the **top-left corner** of the page.
-
-8. Click the button anytime you feel the urge to revenge-trade. You will be instantly redirected to a **15-minute disciplined lockout** at `tiltcheck.vercel.app`.
-
-> **Tip:** The button survives SPA route changes. If the site swaps the DOM underneath you, it re-injects automatically within milliseconds.
+4. Enable **Developer Mode**.
+5. Click **Load unpacked**.
+6. Select the `tiltcheck-extension` folder.
+7. Open TradingView, DexScreener or Pump.fun.
+8. Click the **Emergency Cool-Down** button whenever you need to step away.
 
 ---
 
-## Security & Privacy
+# 🔒 Privacy
 
-This system is designed with a **zero-trust, zero-telemetry** philosophy:
+TiltCheck follows a **zero-trust, zero-telemetry** philosophy.
 
-- **No external data collection.** The extension does not read, store, or transmit trading data, wallet addresses, or personal information.
-- **No analytics.** No tracking pixels. No error reporting. No cloud services.
-- **No backend.** The Pine Script runs entirely inside TradingView. The extension runs entirely inside your browser. The only outbound action is a voluntary redirect when you click the button.
-- **Open-source auditability.** The entire codebase is contained in three small, readable files. You can verify every line before installing.
+- No analytics
+- No cookies
+- No cloud backend
+- No accounts
+- No personal information collected
+- No trading data transmitted
 
-**Your risk data is yours. Your privacy is yours.**
-
----
-
-## How It Works (For the Curious)
-
-### DRE-Monitor Mathematical Logic
-
-The script tracks two independent risk metrics:
-
-1. **Peak-to-Trough Drawdown:** `((SessionHigh - Close) / SessionHigh) * 100`
-   - A running percentage decline from the highest price achieved since the indicator loaded.
-   - Updates only when a new high is printed, creating a natural recovery mechanism.
-
-2. **Consecutive Adverse Bars:** A counter of uninterrupted bars where `Close < MA` (and optionally `Close < Open`).
-   - Resets to zero on the first non-adverse bar, ensuring the count reflects sustained momentum against your position.
-
-Both metrics are gated by `barstate.isconfirmed` to eliminate repainting. A one-shot `breachFired` latch prevents alert spam.
-
-### TiltCheck Extension Logic
-
-The extension uses a **MutationObserver** to watch for DOM changes on modern SPAs. It injects a fixed-position button with `z-index: 2147483647` (maximum safe value) to survive every banner, popup, and overlay. On click, it simulates a native `<a>` element click with `target="_top"` to force a full-tab redirect, breaking out of any iframe context.
+Everything runs locally.
 
 ---
 
-## License
+# 🧠 Technical Details
 
-This project is open-source and provided as-is for the trading community. Use it, fork it, improve it, and share it with traders who need it.
+## DRE-Monitor
 
-**Trade smart. Stay disciplined. 🛡️**
+Tracks:
+
+- Peak-to-trough drawdown
+- Consecutive adverse bars
+
+Uses `barstate.isconfirmed` to avoid repainting.
+
+## TiltCheck Extension
+
+Uses a `MutationObserver` to survive modern SPA websites and automatically re-injects the Emergency Cool-Down button.
+
+---
+
+# 🛣 Roadmap
+
+## Version 1
+
+- [x] Browser Extension
+- [x] DRE-Monitor
+- [x] Trade Journal
+- [x] Weekly Summary
+- [x] Pre-Trade Checklist
+
+## Planned
+
+- [ ] Chrome Web Store
+- [ ] Firefox Extension
+- [ ] Better Analytics
+- [ ] Custom Lock Durations
+- [ ] Telegram Notifications
+- [ ] Export Journal
+- [ ] Mobile Companion
+
+---
+
+# ❤️ Why Open Source?
+
+Trading psychology tools should be transparent.
+
+Inspect every line of code before installing.
+
+No hidden tracking.
+
+No hidden telemetry.
+
+---
+
+# 🤝 Contributing
+
+Issues, feature requests and pull requests are welcome.
+
+If TiltCheck helped you avoid even one revenge trade, consider leaving the repository a ⭐.
+
+---
+
+# 📄 License
+
+MIT License
+
+Trade smart.
+
+Stay disciplined. 🛡️
