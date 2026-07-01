@@ -25,15 +25,29 @@ https://youtu.be/JjMKinj2t3Y?si=48l2cXh9zn_3aVnG
 
 ---
 
+
 ## 📸 Screenshots
 
-> Replace these placeholders with screenshots.
+### Home Dashboard
+![](assets/Screenshot%202026-07-01%20092445.png)
 
-- Home Dashboard
-- Pre-Trade Checklist
-- Trade Journal
-- Weekly Summary
-- TradingView Emergency Cool-Down Button
+### Pre-Trade Checklist
+![](assets/Screenshot%202026-07-01%20092523.png)
+
+### Trade Journal
+![](assets/Screenshot%202026-07-01%20092554.png)
+
+### Weekly Summary
+![](assets/Screenshot%202026-07-01%20092630.png)
+
+### Emergency Cool-Down
+![](assets/Screenshot%202026-07-01%20092650.png)
+
+### Analytics
+![](assets/Screenshot%202026-07-01%20092752.png)
+
+### TradingView Extension
+![](assets/Screenshot%202026-07-01%20092848.png)
 
 ---
 
