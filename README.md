@@ -20,7 +20,8 @@ https://tiltcheck-app.vercel.app
 
 ### 📺 Demo Video
 
-> Replace with your YouTube demo link.
+https://youtu.be/JjMKinj2t3Y?si=48l2cXh9zn_3aVnG
+
 
 ---
 
