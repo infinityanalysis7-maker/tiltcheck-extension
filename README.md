@@ -1,71 +1,82 @@
 # TiltCheck
 
-**Trade with discipline.**
+> Stop revenge trading before it starts.
 
-Behavioral trading assistant that prevents revenge trading before it starts.
+An open-source, privacy-first trading discipline app that helps traders build consistent habits through readiness checks, trade journaling, and behavioral lockouts.
 
-<details>
-<summary>Hero Image</summary>
+No cloud. No accounts. No subscriptions.
 
-<!-- Replace with assets/hero.png -->
-![TiltCheck](assets/home.png)
-</details>
+![TiltCheck Dashboard](assets/hero.png)
+
+---
+
+## Demo
+
+🌐 **Live App** — [tiltcheck.vercel.app](https://tiltcheck.vercel.app)
+
+📹 **Demo Video** — Coming soon
 
 ---
 
 ## Why TiltCheck?
 
-Most traders don't blow accounts because of bad strategies.
+Most traders don't lose because of bad strategies.
 
-They blow them because they break their own rules.
+They lose because they abandon their strategy.
 
-TiltCheck acts like a **behavioral circuit breaker**.
-
-Instead of trying to predict markets... it protects you from yourself.
+TiltCheck is a **behavioral circuit breaker** that helps you pause, reflect, and stick to your trading plan before emotions take over.
 
 ---
 
 ## Features
 
-- **Daily Readiness Check** — 5-question assessment that scores your mental state before you trade
-- **Trade Logging** — Record every trade with entry, exit, size, P&L, screenshots, and notes
-- **Session Summary** — Review your day with aggregated stats and behavioral patterns
-- **Streak Tracking** — Build discipline streaks by completing your daily routine
-- **Progressive Lockout** — Escalating cool-down periods when you trade while tilted
-- **Privacy First** — Everything stays on your device. No cloud, no accounts, no telemetry.
-- **Local Storage Only** — Your data is yours. Export or delete it anytime.
+- ✅ **Daily Readiness Check** — 5-question assessment that scores your mental state
+- 📝 **Trade Journal** — Log every trade with entry, exit, P&L, screenshots, and notes
+- 📊 **Session Summary** — Review behavioral patterns and daily stats
+- 🔥 **Discipline Streaks** — Build momentum by completing your daily routine
+- 🛑 **Progressive Lockouts** — Escalating cool-downs when you trade while tilted
+- 🔒 **Privacy First** — No cloud, no accounts, no telemetry
+- 💾 **Local Storage Only** — Your data stays on your device. Export or delete anytime.
 
 ---
 
 ## Screenshots
 
-| Home | Onboarding | Readiness |
-|------|-----------|-----------|
-| ![Home](assets/home.png) | ![Onboarding](assets/onboarding.png) | ![Readiness](assets/readiness.png) |
+### Home
 
-| Log Trade | Summary | Settings |
-|-----------|---------|----------|
-| ![Log Trade](assets/log-trade.png) | ![Summary](assets/summary.png) | ![Settings](assets/settings.png) |
+![Home](assets/home.png)
+
+### Readiness Check
+
+![Readiness](assets/readiness.png)
+
+### Trade Log
+
+![Trade Log](assets/log.png)
+
+### Session Summary
+
+![Summary](assets/summary.png)
 
 ---
 
 ## Installation
 
-### Web App
+### Use the Web App
 
 Visit **[tiltcheck.vercel.app](https://tiltcheck.vercel.app)** and install as a PWA:
 
-- **Desktop**: Click the install icon in your browser's address bar
-- **Mobile**: Share → Add to Home Screen
+- **Desktop** — Click the install icon in your browser's address bar
+- **Mobile** — Share → Add to Home Screen
 
-### Chrome Extension
+### Install the Chrome Extension
 
 1. Clone the repo and open `chrome://extensions/`
 2. Enable **Developer mode**
 3. Click **Load unpacked** and select `tiltcheck-extension/`
 4. An **Emergency Cool-Down** button appears on supported trading sites
 
-### Manual Build
+### Build from Source
 
 ```bash
 git clone https://github.com/infinityanalysis7-maker/tiltcheck-extension
@@ -76,7 +87,23 @@ npm run dev
 
 ---
 
+## Project Status
+
+| | |
+|---|---|
+| **Current Version** | v0.2.0 |
+| **Status** | Active Development |
+| **Next Milestone** | Chrome Web Store Release |
+
+---
+
 ## Tech Stack
+
+![Next.js](https://img.shields.io/badge/Next.js-16-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06b6d4)
+![PWA](https://img.shields.io/badge/PWA-✓-purple)
+![Manifest V3](https://img.shields.io/badge/Manifest_V3-✓-green)
 
 | Layer | Technology |
 |-------|-----------|
@@ -89,44 +116,61 @@ npm run dev
 
 ---
 
+## Architecture
+
+```
+tiltcheck/
+├── app/          # Next.js App Router pages
+├── components/   # UI components
+├── lib/          # Storage & helpers
+└── public/       # Static assets
+
+tiltcheck-extension/
+├── manifest.json
+├── content.js
+└── styles.css
+```
+
+---
+
 ## Roadmap
 
-### v1 ✅
+### ✅ v1
 
-- Daily Readiness Check
-- Trade Logging with Screenshots
-- Session Summary & Stats
-- Discipline Streaks
-- Progressive Lockout
-- PWA Install
-- Privacy-first (100% local)
+- [x] Daily Readiness Check
+- [x] Trade Journal with Screenshots
+- [x] Session Summary & Stats
+- [x] Discipline Streaks
+- [x] Progressive Lockouts
+- [x] PWA Install
+- [x] Privacy-first (100% local)
 
-### v2
+### 🚀 v2
 
-- TradingView Pine Script integration
-- Auto-detection of emotional trading patterns
-- Analytics dashboard
-- Calendar view
-- CSV / JSON export
-- Cloud sync (optional)
+- [ ] TradingView Pine Script integration
+- [ ] Auto-detection of emotional trading patterns
+- [ ] Analytics dashboard
+- [ ] Calendar view
+- [ ] CSV / JSON export
+- [ ] Cloud sync (optional)
 
 ---
 
 ## Philosophy
 
-**Discipline > Prediction.**
+Markets are unpredictable.
 
-The market will always be unpredictable. Your reaction to it doesn't have to be.
+Your behavior doesn't have to be.
 
-TiltCheck is open source. No cloud. No accounts. No analytics. No telemetry.
+TiltCheck exists to help traders follow their own rules — not to predict the next candle.
 
-Your data stays on your device. Always.
+Everything runs locally. Your trading data belongs to you.
 
 ---
 
 ## Contributing
 
-PRs are welcome. See any issue, want a feature, or found a bug? Open an issue or submit a pull request.
+PRs welcome. Open an issue or submit a pull request for any feature, bug, or improvement.
 
 ---
 
@@ -136,5 +180,6 @@ MIT
 
 ---
 
-⭐ **Star the project**  
+⭐ **Star this repo**
+
 If TiltCheck helped save even one bad trade, consider giving the repository a star. It helps other traders find it.
