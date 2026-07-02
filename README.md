@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/hero.png" width="140" alt="TiltCheck Logo">
+  <img src="assets/ChatGPT%20Image%20Jul%202,%202026,%2011_26_16%20AM.png" alt="TiltCheck Banner" width="100%">
 </p>
 
 <h1 align="center">TiltCheck</h1>
@@ -67,23 +67,27 @@ TiltCheck is a **behavioral circuit breaker** that helps you pause, reflect, and
 
 ## Screenshots
 
-### Home
+## Screenshots
 
-![Home](assets/home.png)
+<p align="center">
+  <img src="assets/Screenshot%202026-07-02%20110336.png" width="45%">
+  <img src="assets/Screenshot%202026-07-02%20110352.png" width="45%">
+</p>
 
-### Readiness Check
+<p align="center">
+  <img src="assets/Screenshot%202026-07-02%20110403.png" width="45%">
+  <img src="assets/Screenshot%202026-07-02%20110412.png" width="45%">
+</p>
 
-![Readiness](assets/readiness.png)
+<p align="center">
+  <img src="assets/Screenshot%202026-07-02%20110440.png" width="45%">
+  <img src="assets/Screenshot%202026-07-02%20110452.png" width="45%">
+</p>
 
-### Trade Journal
-
-![Trade Journal](assets/tradelog.png)
-
-### Session Summary
-
-![Summary](assets/summary.png)
-
----
+<p align="center">
+  <img src="assets/Screenshot%202026-07-02%20110511.png" width="45%">
+  <img src="assets/Screenshot%202026-07-02%20110555.png" width="45%">
+</p>
 
 ## Installation
 
