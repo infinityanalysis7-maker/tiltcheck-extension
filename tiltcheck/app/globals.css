@@ -1,0 +1,186 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-primary: #0a0a0f;
+  --color-bg-card: #13131f;
+  --color-bg-elevated: #1a1a2e;
+  --color-text-primary: #f0f0f5;
+  --color-text-secondary: #8b8ba0;
+  --color-accent: #6366f1;
+  --color-accent-light: #818cf8;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+}
+
+body {
+  background-color: #0a0a0f;
+  color: #f0f0f5;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0f;
+}
+::-webkit-scrollbar-thumb {
+  background: #1a1a2e;
+  border-radius: 4px;
+}
+
+/* Range slider styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #1a1a2e;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #6366f1;
+  cursor: pointer;
+  border: 3px solid #0a0a0f;
+  box-shadow: 0 0 0 2px #6366f1;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #6366f1;
+  cursor: pointer;
+  border: 3px solid #0a0a0f;
+  box-shadow: 0 0 0 2px #6366f1;
+}
+
+/* Select styling */
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%238b8ba0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 18px;
+}
+
+/* Cooldown pulse animation */
+@keyframes danger-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(239, 68, 68, 0);
+  }
+}
+.animate-danger-pulse {
+  animation: danger-pulse 2s ease-in-out infinite;
+}
+
+/* Score ring animation */
+@keyframes score-reveal {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.animate-score-reveal {
+  animation: score-reveal 0.4s ease-out forwards;
+}
+
+/* Quote fade animation for lockout screen */
+@keyframes fade-quote {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+.animate-fade-quote {
+  animation: fade-quote 4s ease-in-out infinite;
+}
+
+/* Slide up animation for modals/screens */
+@keyframes slide-up {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.animate-slide-up {
+  animation: slide-up 0.5s ease-out forwards;
+}
+
+/* Staggered children animation */
+@keyframes stagger-in {
+  0% {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.animate-stagger-in {
+  animation: stagger-in 0.4s ease-out forwards;
+}
+
+/* Checklist item check animation */
+@keyframes checklist-check {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.animate-checklist-check {
+  animation: checklist-check 0.3s ease-out;
+}
+
+/* Smooth progress transition */
+.progress-smooth {
+  transition: stroke-dashoffset 1s linear;
+}
+
+/* Card fade-in animation */
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out forwards;
+}
+
+/* Safe area for bottom nav */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
