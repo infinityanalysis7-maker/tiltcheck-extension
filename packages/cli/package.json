@@ -1,0 +1,45 @@
+{
+  "name": "@nicholasgasior/ctf-usb-rubber-ducky",
+  "version": "1.0.0",
+  "description": "A CLI tool for CTF players to run ducky scripts on USB Rubber Ducky devices.",
+  "type": "module",
+  "main": "./dist/main.js",
+  "types": "./dist/main.d.ts",
+  "bin": {
+    "ctf-usb-rubber-ducky": "./dist/main.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc && chmod +x dist/main.js",
+    "start": "node dist/main.js",
+    "dev": "rm -rf dist && tsc && node dist/main.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "ctf",
+    "usb-rubber-ducky",
+    "ducky-script",
+    "hack5"
+  ],
+  "author": "Nicholas Gasior",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nicholasgasior/ctf-usb-rubber-ducky"
+  },
+  "dependencies": {
+    "@nicholasgasior/ducky-loader": "^1.0.0",
+    "chalk": "^4.1.2",
+    "commander": "^10.0.0",
+    "fast-glob": "^3.2.12",
+    "inquirer": "^8.2.6",
+    "ora": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^8.2.6",
+    "@types/node": "^18.15.11",
+    "typescript": "^5.0.4"
+  }
+}

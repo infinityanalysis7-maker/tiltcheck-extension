@@ -122,10 +122,6 @@ hline(drawdownThresholdPct, 'Drawdown Limit', color=color.new(color.red, 50), li
 plot(consecutiveAdverse, 'Consecutive Adverse Bars', color=color.new(color.orange, 0), style=plot.style_histogram)
 hline(maxConsecutiveLosses, 'Consecutive Limit', color=color.new(color.orange, 50), linestyle=hline.style_dashed)
 
-// Price overlay: Plot the selected MA on the main chart pane so users can
-// visually confirm the adverse-bar condition in real-time.
-plot(enableMAFilter ? maValue : na, 'Dynamic MA', color=color.new(color.blue, 0), linewidth=1)
-
 // Background highlight: When the market is in a confirmed adverse sequence,
 // the background receives a subtle warning tint.
 bgcolor(enableConsecutive and consecutiveAdverse >= 1 ? color.new(color.orange, 90) : na, title='Adverse Sequence Zone')
