@@ -1,5 +1,5 @@
-<p align="center">
-  <img src="assets/hero.png" width="140" alt="TiltCheck Logo">
+p align="center">
+  <img src="assets/Screenshot%202026-07-02%20111714.png" width="85%">
 </p>
 
 <h1 align="center">TiltCheck</h1>
