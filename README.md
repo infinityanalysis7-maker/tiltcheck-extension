@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/Screenshot%202026-07-02%20111714.png" width="75%" alt="TiltCheck Banner">
+  <img src="assets/ChatGPT%20Image%20Jul%202,%202026,%2011_26_16%20AM.png" alt="TiltCheck Banner" width="100%">
 </p>
 
 <h1 align="center">TiltCheck</h1>
